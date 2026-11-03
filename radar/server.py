@@ -104,7 +104,7 @@ class Handler(BaseHTTPRequestHandler):
             from .history import overview
             return self.reply(overview(q.get('symbol',['000001.SH'])[0]))
         if path=='/api/observed-symbols':
-            with db() as c: symbols=[dict(r) for r in c.execute('SELECT symbol,source,count(*) records,min(date) first_date,max(date) last_date FROM observations GROUP BY symbol,source')]
+            with db() as c: symbols=[dict(r) for r in c.execute('SELECT symbol,source,count(*) records,min(date) first_date,max(date) last_date,group_concat(DISTINCT metric) metrics FROM observations GROUP BY symbol,source')]
             return self.reply(symbols)
         if path=='/api/holdings':
             with db() as c: rows=[dict(r) for r in c.execute('SELECT * FROM holdings ORDER BY filed DESC,reported_value DESC LIMIT 200')]

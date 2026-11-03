@@ -1,5 +1,6 @@
 """Produce a self-contained GitHub Pages site without publishing private research."""
 import json
+import hashlib
 import os
 import shutil
 from pathlib import Path
@@ -12,7 +13,12 @@ from radar.history import manifest, overview
 ROOT=Path(__file__).resolve().parent.parent
 OUT=ROOT/'dist'
 
+def market_filename(symbol):
+ return 'market-'+hashlib.sha256(symbol.encode('utf-8')).hexdigest()[:24]+'.json'
+
 def build():
+ if OUT.is_symlink():raise ValueError('Build output must not be a symlink')
+ if OUT.exists():shutil.rmtree(OUT)
  OUT.mkdir(exist_ok=True)
  for name in ['index.html','style.css','app.js','static-api.js','favicon.svg']:
   shutil.copy2(ROOT/'web'/name,OUT/name)
@@ -35,12 +41,12 @@ def build():
  s['deployment_mode']='public-static-browser-local'
  (data/'snapshot.json').write_text(json.dumps(s,ensure_ascii=False,separators=(',',':')))
  with store.db() as c:
-  symbols=[dict(r) for r in c.execute('SELECT symbol,source,count(*) records,min(date) first_date,max(date) last_date FROM observations GROUP BY symbol,source')]
+  symbols=[dict(r) for r in c.execute('SELECT symbol,source,count(*) records,min(date) first_date,max(date) last_date,group_concat(DISTINCT metric) metrics FROM observations GROUP BY symbol,source')]
   holdings=[dict(r) for r in c.execute('SELECT * FROM holdings ORDER BY filed DESC,reported_value DESC LIMIT 200')]
  (data/'symbols.json').write_text(json.dumps(symbols,ensure_ascii=False))
  (data/'holdings.json').write_text(json.dumps({'rows':holdings,'note':'13F延迟披露，非完整仓位；原文value未归一化历史口径。'},ensure_ascii=False))
  for row in symbols:
-  (data/('market-'+row['symbol']+'.json')).write_text(json.dumps(market_data(row['symbol']),ensure_ascii=False,separators=(',',':')))
+  (data/market_filename(row['symbol'])).write_text(json.dumps(market_data(row['symbol']),ensure_ascii=False,separators=(',',':')))
  for meta in manifest()['series']:
   (data/('history-'+meta['symbol']+'.json')).write_text(json.dumps(overview(meta['symbol']),ensure_ascii=False,separators=(',',':')))
  (data/'build.json').write_text(json.dumps({'as_of':s['as_of'],'revision':os.environ.get('GITHUB_SHA','local'),'evidence':s['evidence_total'],'historical_series':len(manifest()['series']),'public_deployment':'research-trial','private_research_exported':False},ensure_ascii=False))
