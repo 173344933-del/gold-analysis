@@ -1,0 +1,282 @@
+{
+  "retrieved": "2026-11-03",
+  "sources": [
+    {
+      "id": "wisdom_archive",
+      "repository": "https://github.com/qiutian02/WisdomGathering-Stock-Data",
+      "commit": "dfb469b9fdba8b3bd2bad7af4e68091a88aefa9f",
+      "license": "仓库MIT；上游数据商业再分发权未独立核验",
+      "scope": "仅选取六个中国指数；不代表全市场个股",
+      "archives": [
+        {
+          "file": "index_daily_1990_to_1999.7z",
+          "sha256": "e7155af340cc2dd471a7aa2722c409e1f05b7660f302a39a92970768453294e0"
+        },
+        {
+          "file": "index_daily_2000_to_2009.7z",
+          "sha256": "b620b06888b1b9f61ffae306fe12afe1ee2a805357a0e672684f054afecdd168"
+        },
+        {
+          "file": "index_daily_2010_to_2019.7z",
+          "sha256": "58404e3bb360c8c32ede39357e3dd16ac1811b66d94156f4f7040cf04117ca65"
+        },
+        {
+          "file": "index_daily_2020_to_2024.7z",
+          "sha256": "c06aed1eb62b9be2682077392b88bae023c679657375cdbe68220c91770bd65c"
+        },
+        {
+          "file": "index_daily_2025.7z",
+          "sha256": "2e1936256f48f6e0af98254d0d64622c77bdbfbc01ed424d7eb6ef986575228c"
+        },
+        {
+          "file": "stock_daily/stock_daily_1990_to_1999.7z",
+          "git_blob": "92abba881a08421f4331877d806ab4e97a6a25cc",
+          "sha256": "bfd2f85f324eb10150cb5de9ac51c0164631f04d0d60f31d2b6c1bf24841feea",
+          "size": 11777551
+        },
+        {
+          "file": "stock_daily/stock_daily_2000_to_2009.7z",
+          "git_blob": "8ff298427774a7c0a977a7a701674c45ad4a7d32",
+          "sha256": "c44d9ab18ca49570ad2c741d648f81151d506840125485b2d943d5030f0b4955",
+          "size": 49251774
+        },
+        {
+          "file": "stock_daily/stock_daily_2010_2014.7z",
+          "git_blob": "0be03597894a61a9dedb2e1b38d76ccb6313f116",
+          "sha256": "aa4d1b1280808237da82b060743d86aa1d98d03e401bfb2db11b0cc2166eda6d",
+          "size": 47596847
+        },
+        {
+          "file": "stock_daily/stock_daily_2015_to_2019.7z",
+          "git_blob": "39035b8c4de985653781d54464dc55f8b3481e6f",
+          "sha256": "7c95db712926a17df07bc063903a09d28a9fa957023f399d7cc89aba8b1667ef",
+          "size": 69451526
+        },
+        {
+          "file": "stock_daily/stock_daily_2020_to_2022.7z",
+          "git_blob": "a100c800a4cd3fa853acaac77731494179a9660b",
+          "sha256": "bb4aac594a96ab59edbbb25e90fa08f3a0488df854ba58da1715f6bf53d19ff5",
+          "size": 64325588
+        },
+        {
+          "file": "stock_daily/stock_daily_2023_to_2024.7z",
+          "git_blob": "f0f4e759eaaf5be1c13fc148bffbc7f38c730e86",
+          "sha256": "9e977b912e4baacee5a5cfc6433bc9749b6823859332876e20f2ac8dd299d18e",
+          "size": 50444699
+        },
+        {
+          "file": "stock_daily/stock_daily_2025.7z",
+          "git_blob": "67b684e0d17fd23ccb58e003e49164e83fb8003d",
+          "sha256": "d841a1481f59399ce806a9d88e0813937b9be2fd3142e199b388fa89f7b1b935",
+          "size": 15511130
+        }
+      ]
+    },
+    {
+      "id": "shiller_dataset",
+      "repository": "https://github.com/datasets/s-and-p-500",
+      "commit": "87a2284276f79d75041c71c8f6d9f2aa1c965e84",
+      "license": "仓库ODC-PDDL；原始Shiller数据授权说明见上游README",
+      "scope": "1995以来美国广义指数月度价格，不代表个股或日内事件反应"
+    }
+  ],
+  "series": [
+    {
+      "symbol": "000001.SH",
+      "name": "上证综指",
+      "country": "CN",
+      "frequency": "daily",
+      "source": "wisdom_archive",
+      "first": "1995-01-03",
+      "last": "2025-06-12",
+      "count": 7389,
+      "sha256": "3f1511c3b489aa2a3364834740ac79d50446ce5adea6dc26a25d9cd9c585273f",
+      "unit": "index_points",
+      "adjustment": "指数发布口径；不视为含分红总回报",
+      "file": "000001.SH.csv"
+    },
+    {
+      "symbol": "399001.SZ",
+      "name": "深证成指",
+      "country": "CN",
+      "frequency": "daily",
+      "source": "wisdom_archive",
+      "first": "1995-01-03",
+      "last": "2025-06-12",
+      "count": 7381,
+      "sha256": "6b657dc1aafd656a89236673353bb5b77f329d7bc9eb77406f3c26e083d37acd",
+      "unit": "index_points",
+      "adjustment": "指数发布口径；不视为含分红总回报",
+      "file": "399001.SZ.csv"
+    },
+    {
+      "symbol": "000016.SH",
+      "name": "上证50",
+      "country": "CN",
+      "frequency": "daily",
+      "source": "wisdom_archive",
+      "first": "2004-01-02",
+      "last": "2025-06-12",
+      "count": 5206,
+      "sha256": "2ef0e0d0bd847d10fabb9fac6ca086c0dbd2368bfb29613e697194001a3372f2",
+      "unit": "index_points",
+      "adjustment": "指数发布口径；不视为含分红总回报",
+      "file": "000016.SH.csv"
+    },
+    {
+      "symbol": "000905.SH",
+      "name": "中证500",
+      "country": "CN",
+      "frequency": "daily",
+      "source": "wisdom_archive",
+      "first": "2005-01-04",
+      "last": "2025-06-12",
+      "count": 4963,
+      "sha256": "cd1443f3e7759ec3477c4e0eafd641bfd36c2a5ae9fc54eca13c67a63d75f926",
+      "unit": "index_points",
+      "adjustment": "指数发布口径；不视为含分红总回报",
+      "file": "000905.SH.csv"
+    },
+    {
+      "symbol": "000300.SH",
+      "name": "沪深300",
+      "country": "CN",
+      "frequency": "daily",
+      "source": "wisdom_archive",
+      "first": "2005-01-04",
+      "last": "2025-06-12",
+      "count": 4963,
+      "sha256": "a557187f9cd0dd7845226f154c26c38f692bf30db5be8f73d876c6c0fb4413d3",
+      "unit": "index_points",
+      "adjustment": "指数发布口径；不视为含分红总回报",
+      "file": "000300.SH.csv"
+    },
+    {
+      "symbol": "399006.SZ",
+      "name": "创业板指",
+      "country": "CN",
+      "frequency": "daily",
+      "source": "wisdom_archive",
+      "first": "2010-06-01",
+      "last": "2025-06-12",
+      "count": 3649,
+      "sha256": "c0f487b3f6d3d63393214d7c05a443f6a9d8906aeb8b361ebb48de02ad9efa95",
+      "unit": "index_points",
+      "adjustment": "指数发布口径；不视为含分红总回报",
+      "file": "399006.SZ.csv"
+    },
+    {
+      "symbol": "SP500.MONTHLY",
+      "name": "标普500 · 月度均值",
+      "country": "US",
+      "frequency": "monthly_average",
+      "source": "shiller_dataset",
+      "first": "1995-01-31",
+      "last": "2026-09-30",
+      "count": 381,
+      "sha256": "4c2127319dabe16eafa0f973e98bf5057e72061e22fde80d1f8129f724e1fc18",
+      "unit": "index_points",
+      "adjustment": "价格月均值，非月末收盘、非总回报；2023-07起由仓库用FRED续接",
+      "file": "SP500.MONTHLY.csv"
+    },
+    {
+      "symbol": "600519.SH",
+      "name": "贵州茅台 · 未复权",
+      "country": "CN",
+      "frequency": "daily",
+      "source": "wisdom_archive",
+      "first": "2001-08-27",
+      "last": "2025-08-06",
+      "count": 5735,
+      "sha256": "0076afceaba5aaf84b900346cbd7b73f1194b33dcc0ad0fc44bccc18002dee3d",
+      "unit": "CNY",
+      "adjustment": "未复权个股收盘；分红送转与拆股会扭曲跨期收益，不能当作投资总回报；异常跳变窗口标记为不适用",
+      "file": "600519.SH.csv"
+    },
+    {
+      "symbol": "600036.SH",
+      "name": "招商银行 · 未复权",
+      "country": "CN",
+      "frequency": "daily",
+      "source": "wisdom_archive",
+      "first": "2002-04-09",
+      "last": "2025-08-06",
+      "count": 5592,
+      "sha256": "e4ab981e7fc49d2025cf28670cf0349cec01c01da5feb64b16480a74c15e6ba7",
+      "unit": "CNY",
+      "adjustment": "未复权个股收盘；分红送转与拆股会扭曲跨期收益，不能当作投资总回报；异常跳变窗口标记为不适用",
+      "file": "600036.SH.csv"
+    },
+    {
+      "symbol": "600547.SH",
+      "name": "山东黄金 · 未复权",
+      "country": "CN",
+      "frequency": "daily",
+      "source": "wisdom_archive",
+      "first": "2003-08-28",
+      "last": "2025-08-06",
+      "count": 5090,
+      "sha256": "e4baba76d04bc2f2fbacf91f7e8bf96250935c829b7ea95397cf479c8ba59f3b",
+      "unit": "CNY",
+      "adjustment": "未复权个股收盘；分红送转与拆股会扭曲跨期收益，不能当作投资总回报；异常跳变窗口标记为不适用",
+      "file": "600547.SH.csv"
+    },
+    {
+      "symbol": "000001.SZ",
+      "name": "平安银行 · 未复权",
+      "country": "CN",
+      "frequency": "daily",
+      "source": "wisdom_archive",
+      "first": "1995-01-03",
+      "last": "2025-08-06",
+      "count": 7249,
+      "sha256": "d5abdc622311e393635e713edf88a256219796b136ef76005a8572afbae5c8e4",
+      "unit": "CNY",
+      "adjustment": "未复权个股收盘；分红送转与拆股会扭曲跨期收益，不能当作投资总回报；异常跳变窗口标记为不适用",
+      "file": "000001.SZ.csv"
+    },
+    {
+      "symbol": "000858.SZ",
+      "name": "五粮液 · 未复权",
+      "country": "CN",
+      "frequency": "daily",
+      "source": "wisdom_archive",
+      "first": "1998-04-27",
+      "last": "2025-08-06",
+      "count": 6479,
+      "sha256": "42c5f4ada470c319f19155e9b15e3d741e0525f586499cd6a83e531bd375b741",
+      "unit": "CNY",
+      "adjustment": "未复权个股收盘；分红送转与拆股会扭曲跨期收益，不能当作投资总回报；异常跳变窗口标记为不适用",
+      "file": "000858.SZ.csv"
+    },
+    {
+      "symbol": "002594.SZ",
+      "name": "比亚迪 · 未复权",
+      "country": "CN",
+      "frequency": "daily",
+      "source": "wisdom_archive",
+      "first": "2011-06-30",
+      "last": "2025-08-06",
+      "count": 3415,
+      "sha256": "b6c09ce4164ff8628a588cb053f0687579727911f9abc4949f3848b8ef6b245f",
+      "unit": "CNY",
+      "adjustment": "未复权个股收盘；分红送转与拆股会扭曲跨期收益，不能当作投资总回报；异常跳变窗口标记为不适用",
+      "file": "002594.SZ.csv"
+    },
+    {
+      "symbol": "300750.SZ",
+      "name": "宁德时代 · 未复权",
+      "country": "CN",
+      "frequency": "daily",
+      "source": "wisdom_archive",
+      "first": "2018-06-11",
+      "last": "2025-08-06",
+      "count": 1738,
+      "sha256": "bc678bec3bea944de2cf817803b7026fa62f4d152926c5843cf7b4476f020377",
+      "unit": "CNY",
+      "adjustment": "未复权个股收盘；分红送转与拆股会扭曲跨期收益，不能当作投资总回报；异常跳变窗口标记为不适用",
+      "file": "300750.SZ.csv"
+    }
+  ],
+  "serialization": "Derived CSV uses UTF-8 with LF line endings; original archive checksums remain unchanged."
+}

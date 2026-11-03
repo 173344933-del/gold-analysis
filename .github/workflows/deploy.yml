@@ -1,0 +1,61 @@
+name: Test and publish Narrative Radar
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 22 * * *'
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: narrative-radar-pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify scoring, historical alignment, persistence and API
+        run: python -m unittest discover -s tests -v
+      - name: Build a public snapshot without private research
+        env:
+          RADAR_REFRESH_PUBLIC: '1'
+        run: python -m scripts.build_site
+      - name: Validate build files and provenance
+        run: python -m scripts.verify_site dist
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify the public deployment
+        env:
+          RADAR_PUBLIC_URL: ${{ steps.deployment.outputs.page_url }}
+        run: python -m scripts.verify_deployment
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: deployment-verification
+          path: .radar/deployment-verification.json
+          if-no-files-found: ignore

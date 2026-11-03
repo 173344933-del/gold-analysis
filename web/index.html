@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="./favicon.svg"><title>叙事周期 · Narrative Radar</title><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head>
+<body>
+<aside class="sidebar">
+  <a class="brand" href="/" aria-label="叙事周期首页"><span class="brandmark">N<span>↗</span></span><div>叙事周期<small>NARRATIVE RADAR</small></div></a>
+  <div class="workspace-label">RESEARCH WORKSPACE <span>01</span></div>
+  <nav aria-label="主导航">
+    <button class="nav active" data-view="overview"><span>◫</span> 研究总览 <i>01</i></button>
+    <button class="nav" data-view="radar"><span>◎</span> 叙事雷达 <i>02</i></button>
+    <button class="nav" data-view="markets"><span>⌁</span> 交易验证 <i>03</i></button>
+    <button class="nav" data-view="history"><span>◷</span> 历史事件研究 <i>30Y</i></button>
+    <button class="nav" data-view="watchlist"><span>☆</span> 我的观察池 <i id="watch-count">0</i></button>
+    <button class="nav" data-view="evidence"><span>▤</span> 证据账本 <i>05</i></button>
+    <div class="nav-divider"></div>
+    <button class="nav" data-view="sources"><span>⇄</span> 数据源与覆盖</button>
+    <button class="nav" data-view="method"><span>⊞</span> 评价方法</button>
+  </nav>
+  <div class="sidebar-bottom"><div class="coverage-dot"></div><span>公开证据 · 独立判断</span><p>知道什么，也知道还不知道什么。</p><div class="profile"><span>研</span><div>本地研究工作区<small>LOCAL / PRIVATE</small></div></div></div>
+</aside>
+<main>
+  <header class="topbar"><div class="breadcrumb">工作台 <span>/</span> <strong id="crumb">研究总览</strong></div><div class="top-actions"><span class="market-tag">A 股 + 美股</span><button id="export-btn" class="plain-btn">↓ 导出数据</button></div></header>
+  <div class="page">
+    <section class="page-heading"><div><div class="eyebrow">SIGNALS OVER STORIES</div><h1 id="page-title">把叙事，放回证据中。</h1><p id="page-subtitle">从注意力的变化，到可以被验证的投资假设。</p></div><div class="heading-actions"><div class="asof" id="asof">正在连接研究引擎</div><button id="refresh-btn" class="primary-btn"><span>↻</span> 更新公开数据</button></div></section>
+    <div id="status-banner" role="status"></div>
+    <section id="content" aria-live="polite"><div class="loading">正在读取证据账本…</div></section>
+    <footer>叙事周期 / NARRATIVE RADAR <span>公开数据研究工具 · 热度不是回报预测 · 数据缺失不等于零</span><a href="#method" id="footer-method">方法与限制 ↗</a></footer>
+  </div>
+</main>
+<dialog id="detail-dialog"><div id="detail-content"></div></dialog>
+<dialog id="import-dialog"><div class="dialog-head"><div><div class="eyebrow">BRING YOUR EVIDENCE</div><h2>导入可追溯证据</h2></div><button class="icon-btn" id="close-import" aria-label="关闭导入">×</button></div><p class="muted">JSON 数组，每条含 title、url、published、source；可选 theme、summary、stance。不会自动抓取链接或推断立场。</p><label for="import-file" class="file-label">选择 JSON 文件<input type="file" id="import-file" accept="application/json,.json"></label><label for="import-text">或粘贴 JSON</label><textarea id="import-text" rows="10" placeholder='[{"title":"报告标题","url":"https://原始来源地址","published":"2026-11-01T08:00:00Z","source":"原始发布机构","theme":"ai","stance":"unknown"}]'></textarea><p class="muted">支持 support（支持）、challenge（反证）、unknown（未判定）。导入来源默认未核验。</p><div class="dialog-actions"><a href="/api/export?format=csv" class="text-link">导出现有 CSV ↗</a><button id="submit-import" class="primary-btn">校验并导入</button></div></dialog>
+<div id="toast" role="status"></div>
+</body></html>
