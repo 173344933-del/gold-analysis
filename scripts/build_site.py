@@ -46,4 +46,12 @@ def build():
  (data/'build.json').write_text(json.dumps({'as_of':s['as_of'],'revision':os.environ.get('GITHUB_SHA','local'),'evidence':s['evidence_total'],'historical_series':len(manifest()['series']),'public_deployment':'research-trial','private_research_exported':False},ensure_ascii=False))
  store.DB_PATH=original
  print('Built',OUT,'files',len(list(OUT.rglob('*'))),'bytes',sum(f.stat().st_size for f in OUT.rglob('*') if f.is_file()))
-if __name__=='__main__':build()
+if __name__=='__main__':
+ try:
+  build()
+ except Exception as error:
+  # Public annotations give actionable failures without exposing environments,
+  # credential files, HTTP headers or private research data.
+  message=(type(error).__name__+': '+str(error)).replace('%','%25').replace('\r','%0D').replace('\n','%0A')
+  print('::error title=Public snapshot build failed::'+message,flush=True)
+  raise
