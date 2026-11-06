@@ -22,12 +22,36 @@ jobs:
           python-version: '3.12'
       - name: Verify scoring, historical alignment, persistence and API
         run: python -m unittest discover -s tests -v
+      - uses: actions/cache/restore@v4
+        with:
+          path: .radar/build.db
+          key: radar-public-v2-${{ github.run_id }}
+          restore-keys: radar-public-v2-
       - name: Build a public snapshot without private research
         env:
           RADAR_REFRESH_PUBLIC: '1'
         run: python -m scripts.build_site
       - name: Validate build files and provenance
         run: python -m scripts.verify_site dist
+      - name: Save the public-only evidence history
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: .radar/build.db
+          key: radar-public-v2-${{ github.run_id }}
+      - name: Upload data diagnostics for review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-data-diagnostics
+          path: |
+            dist/data/build.json
+            dist/data/readiness.json
+            dist/data/score-inputs.json
+            dist/data/market-audit.json
+          if-no-files-found: warn
+      - name: Require core evidence and recent market samples
+        run: python -m scripts.check_data_readiness dist
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

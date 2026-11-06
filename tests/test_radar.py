@@ -52,13 +52,13 @@ class StorageCase(unittest.TestCase):
 
 class DatabaseTests(StorageCase):
  def test_rss_preserves_provenance_and_is_repeatable(self):
-  xml=f'<rss><channel><item><title>Artificial intelligence research</title><link>https://example.org/ai</link><pubDate>{NOW.isoformat()}</pubDate><description>New AI report</description></item><item><title>gold</title><link>https://example.org/gold</link></item></channel></rss>'
+  xml=f'<rss><channel><item><title>GPU data center research</title><link>https://example.org/ai</link><pubDate>{NOW.isoformat()}</pubDate><description>New AI report</description></item><item><title>gold</title><link>https://example.org/gold</link></item></channel></rss>'
   self.assertEqual(ingest.rss(self.source('fed'),xml),1)
   self.assertEqual(ingest.rss(self.source('fed'),xml),0)
   with store.db() as c:
    r=c.execute('SELECT * FROM evidence').fetchone();self.assertEqual(r['source'],'fed');self.assertEqual(r['stance'],'unknown')
  def test_atom_parses_link_attributes(self):
-  xml=f'<feed xmlns="http://www.w3.org/2005/Atom"><entry><title>Artificial intelligence model</title><link href="https://example.org/paper"/><published>{NOW.isoformat()}</published><summary>AI</summary></entry></feed>'
+  xml=f'<feed xmlns="http://www.w3.org/2005/Atom"><entry><title>GPU data center model</title><link href="https://example.org/paper"/><published>{NOW.isoformat()}</published><summary>AI</summary></entry></feed>'
   self.assertEqual(ingest.rss(self.source('arxiv'),xml),1)
  def test_market_csv_ingests_ohlcv_not_fund_flow(self):
   with patch('radar.ingest.fetch',return_value='Date,Open,High,Low,Close,Volume\n2020-01-02,10,12,9,11,1000\n'):
@@ -75,7 +75,7 @@ class DatabaseTests(StorageCase):
    self.assertEqual(ingest.run_source(self.source('github'))['count'],1)
   with store.db() as c:self.assertEqual(c.execute('SELECT count(*) FROM evidence').fetchone()[0],0)
  def test_failure_preserves_archived_data(self):
-  ingest.save_evidence('fed','Artificial intelligence report','https://example.org/a',NOW.isoformat())
+  ingest.save_evidence('fed','GPU data center report','https://example.org/a',NOW.isoformat())
   with patch('radar.ingest.fetch',side_effect=urllib.error.URLError('Tunnel connection failed: 403 Forbidden')):
    result=ingest.run_source(self.source('fed'))
   self.assertEqual(result['status'],'error');self.assertIn('403',result['message'])
@@ -106,7 +106,7 @@ class APITests(StorageCase):
   self.assertEqual(self.request('/api/import',{'records':rows})[0],400)
   self.assertEqual(json.loads(self.request('/api/snapshot')[1])['evidence_total'],0)
  def test_import_annotation_watch_notes_export(self):
-  row={'title':'Artificial intelligence research','url':'https://example.org/report','published':NOW.isoformat(),'source':'external','theme':'ai'}
+  row={'title':'GPU data center research','url':'https://example.org/report','published':NOW.isoformat(),'source':'external','theme':'ai'}
   self.assertEqual(self.request('/api/import',{'records':[row]})[0],200)
   s=json.loads(self.request('/api/snapshot')[1]);eid=s['evidence'][0]['id']
   self.assertEqual(self.request('/api/annotate',{'id':eid,'stance':'challenge'})[0],200)
@@ -123,7 +123,7 @@ class APITests(StorageCase):
   model['p_base']=80;self.assertEqual(self.request('/api/scenario',model)[0],400)
   model['p_base']=50;model['price']=0;self.assertEqual(self.request('/api/scenario',model)[0],400)
  def test_decision_log_attaches_existing_evidence(self):
-  ingest.save_evidence('fed','Artificial intelligence report','https://example.org/a',NOW.isoformat())
+  ingest.save_evidence('fed','GPU data center report','https://example.org/a',NOW.isoformat())
   self.assertEqual(self.request('/api/decision',{'theme':'ai','disposition':'补充核验','rationale':'还需要核验现金流变化'})[0],200)
   s=json.loads(self.request('/api/snapshot')[1]);self.assertEqual(len(json.loads(s['decisions'][0]['evidence_ids'])),1)
  def test_malicious_url_rejected(self):
@@ -131,7 +131,7 @@ class APITests(StorageCase):
   self.assertEqual(self.request('/api/import',{'records':[row]})[0],400)
  def test_json_array_request_rejected(self):self.assertEqual(self.request('/api/notes',[])[0],400)
  def test_csv_formula_injection_neutralized(self):
-  ingest.save_evidence('fed','=HYPERLINK("evil") Artificial intelligence','https://example.org/a',NOW.isoformat())
+  ingest.save_evidence('fed','=HYPERLINK("evil") GPU data center','https://example.org/a',NOW.isoformat())
   self.assertIn("'=HYPERLINK",self.request('/api/export?format=csv')[1])
 
 if __name__=='__main__':unittest.main()

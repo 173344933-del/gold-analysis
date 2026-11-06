@@ -13,6 +13,12 @@ THEMES = [
 ]
 
 SOURCES = [
+ dict(id='nvidia_news', name='NVIDIA Newsroom', category='公司原文', kind='rss', url='https://nvidianews.nvidia.com/releases.xml', authority=.8, coverage='芯片与算力供应商公告；厂商自述，非独立验证', history='滚动RSS，需持续保存', region='GLOBAL', publisher_group='nvidia', primary_hosts=['nvidianews.nvidia.com']),
+ dict(id='azure_blog', name='Microsoft Azure Blog', category='公司原文', kind='rss', url='https://azure.microsoft.com/en-us/blog/feed/', authority=.8, coverage='云计算运营商原文；仅算力相关内容计入AI主题', history='滚动RSS，需持续保存', region='GLOBAL', publisher_group='microsoft', primary_hosts=['azure.microsoft.com']),
+ dict(id='pbc', name='中国人民银行 · 新闻RSS', category='官方政策', kind='rss', url='https://www.pbc.gov.cn/goutongjiaoliu/113456/2986536/index.html', authority=1.0, coverage='政策与金融工作原文；不等于月度信用指标齐备', history='滚动RSS，需持续保存', region='CN', publisher_group='pbc', primary_hosts=['www.pbc.gov.cn','pbc.gov.cn']),
+ dict(id='nbs', name='国家统计局 · 数据发布', category='官方宏观', kind='official_index', url='https://www.stats.gov.cn/sj/zxfb/', authority=1.0, coverage='只采集本机构有明确发布时间的原文标题；不自动提取指标数值', history='有界列表和文章元数据适配器', region='CN', publisher_group='nbs', article_hosts=['www.stats.gov.cn'], article_pattern=r'/sj/zxfb/\d{6}/t\d+_\d+\.html$', origin_names=['国家统计局'], publication_timezone='Asia/Shanghai'),
+ dict(id='nea', name='国家能源局 · 公告与动态', category='官方产业', kind='official_index', url='https://www.nea.gov.cn/', authority=1.0, coverage='只采集本机构有明确发布时间的原文；拒绝外部媒体转载', history='有界列表和文章元数据适配器', region='CN', publisher_group='nea', article_hosts=['www.nea.gov.cn'], article_pattern=r'/\d{8}/[0-9a-f]{32}/c\.html$', origin_names=['国家能源局'], publication_timezone='Asia/Shanghai'),
+ dict(id='eia', name='EIA · Today in Energy', category='官方产业', kind='rss', url='https://www.eia.gov/rss/todayinenergy.xml', authority=1.0, coverage='美国能源官方分析；仅电力相关内容计入power主题', history='滚动RSS，需持续保存', region='US', publisher_group='us_doe', primary_hosts=['www.eia.gov','eia.gov']),
  dict(id='wisdom_archive', name='中国历史指数 / 个股公开归档', category='历史行情', kind='bundled', url='https://github.com/qiutian02/WisdomGathering-Stock-Data/tree/dfb469b9fdba8b3bd2bad7af4e68091a88aefa9f', authority=.6, coverage='本地校验的真实长期子集；确切标的与日期见历史事件研究', history='1995起的代表性序列，部分指数或个股上市较晚；不是全市场', region='CN'),
  dict(id='shiller_dataset', name='Shiller / FRED 月度公开整理集', category='历史行情', kind='bundled', url='https://github.com/datasets/s-and-p-500/tree/87a2284276f79d75041c71c8f6d9f2aa1c965e84', authority=.7, coverage='1995以来标普500月均值，非月末收盘与个股行情', history='固定提交；2023-07起由上游仓库用FRED价格续接；零占位财务字段未导入', region='US'),
  dict(id='fed', name='Federal Reserve', category='官方政策', kind='rss', url='https://www.federalreserve.gov/feeds/press_all.xml', authority=1.0, coverage='RSS 近期公告；不代表完整历史', history='政策档案需按年补充', region='US'),
@@ -30,3 +36,13 @@ SOURCES = [
  dict(id='gdelt', name='GDELT · global news', category='全球新闻', kind='reference', url='https://www.gdeltproject.org/', authority=.65, coverage='待开发历史事件归档连接器；DOC API滚动窗口非20年全文', history='事件数据1979起、GKG 2013起、GDELT2 2015起；三者口径不同', region='GLOBAL'),
  dict(id='funds', name='SEC 13F · Berkshire Hathaway', category='披露持仓', kind='sec13f', url='https://data.sec.gov/submissions/CIK0001067983.json', authority=1.0, coverage='最新可用13F-HR披露的伯克希尔股票持仓；非完整组合，非实时资金流', history='当前仅最新一期；最长延迟45天，N-PORT尚未接入', region='US'),
 ]
+
+# Multiple feeds from the same publisher never create independent breadth.
+for source in SOURCES:
+    source.setdefault('publisher_group', source['id'])
+    source['heat_eligible'] = source['kind'] in ('rss','atom','official_index') and source['id'] != 'hn'
+
+
+from .evidence_rules import CORE_TERMS
+for theme in THEMES:
+    if theme["id"] in CORE_TERMS: theme["terms"] = CORE_TERMS[theme["id"]]
