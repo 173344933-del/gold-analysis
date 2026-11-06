@@ -7,7 +7,7 @@ def verify(directory):
  html=(root/'index.html').read_text()
  assert 'data-mode="static"' in html and './static-api.js' in html
  assert 'href="/style.css"' not in html and 'src="/app.js"' not in html
- for f in ['app.js','style.css','static-api.js','data/snapshot.json','data/build.json','data/history-000001.SH.json']:
+ for f in ['app.js','style.css','static-api.js','data/snapshot.json','data/build.json','data/history-000001.SH.json','data/score-inputs.json','data/market-audit.json','data/readiness.json']:
   assert (root/f).is_file(),f
  s=json.loads((root/'data/snapshot.json').read_text())
  assert not s['notes'] and not s['decisions'] and not s['scenarios'] and not s['watchlist']

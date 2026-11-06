@@ -12,7 +12,7 @@ from pathlib import Path
 from urllib.parse import urlparse, parse_qs
 from .catalog import SOURCES, THEMES
 from .ingest import refresh, save_evidence, utcnow
-from .scoring import rank, VERSION
+from .scoring import rank, VERSION, parse_date
 from .store import db, init
 
 ROOT=Path(__file__).resolve().parent.parent
@@ -36,12 +36,13 @@ def snapshot():
         s['observations']=counts.get(s['id'])
         s['stored_evidence']=sum(r['source']==s['id'] for r in rows)
         sources.append(s)
-    return dict(as_of=utcnow(),themes=rank(rows),sources=sources,watchlist=watches,notes=notes,
+    as_of=utcnow()
+    return dict(as_of=as_of,themes=rank(rows,parse_date(as_of)),sources=sources,watchlist=watches,notes=notes,
         evidence=rows[:500],evidence_total=len(rows),observations=sum(r['records'] for r in counts.values()),
         job=dict(job) if job else None,methodology_version=VERSION,decisions=decisions,scenarios=scenarios,
         history_summary=dict(series=len(manifest()['series']),events=len(EVENTS),first=min(r['first'] for r in manifest()['series'])),
         limitations=['热度是已采集样本的关注强度，不是收益预测或全市场新闻覆盖率。',
-          '来源广度按发布平台计数，不保证原始信源独立；去重仅识别标准化同标题。',
+          '来源广度按原始发布机构分组；同标题转载只计一个代表来源；不同标题同一事件尚未语义去重。',
           '共识需要人工标注支持／反证；报道提及不自动等于支持。',
           '年度宏观值以观察期标识，未保留全部初值与发布日期，不可用于无前视偏差回测。',
           '成交量、成交额、GitHub stars均不等同资金净流入；没有真实交易执行或机构内部决策数据。'])
@@ -63,7 +64,10 @@ def scenario_result(data):
 def market_data(symbol):
     with db() as c:
         rows=[dict(r) for r in c.execute('SELECT * FROM observations WHERE symbol=? ORDER BY date,metric',(symbol,))]
-    return dict(symbol=symbol,rows=rows)
+    # Never splice different providers/adjustment conventions into one price path.
+    sources=sorted({r['source'] for r in rows})
+    chosen=max(sources,key=lambda s:(max(r['date'] for r in rows if r['source']==s),s)) if sources else None
+    return dict(symbol=symbol,source=chosen,available_sources=sources,rows=[r for r in rows if r['source']==chosen])
 
 def memo(tid):
     s=snapshot(); t=next(t for t in s['themes'] if t['id']==tid)

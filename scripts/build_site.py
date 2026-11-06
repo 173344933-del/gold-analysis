@@ -9,6 +9,7 @@ from radar.catalog import SOURCES
 from radar.ingest import run_source, refresh
 from radar.server import snapshot, market_data
 from radar.history import manifest, overview
+from radar.readiness import assess
 
 ROOT=Path(__file__).resolve().parent.parent
 OUT=ROOT/'dist'
@@ -37,6 +38,21 @@ def build():
  s=snapshot()
  s['watchlist']=[];s['notes']={};s['decisions']=[];s['scenarios']={}
  s['evidence']=[r for r in s['evidence'] if not r['source'].startswith('import:')]
+ with store.db() as c:
+  all_evidence=[dict(r) for r in c.execute('SELECT * FROM evidence ORDER BY published DESC,id')]
+  allowed={source['id'] for source in SOURCES}
+  if any(r['source'] not in allowed for r in all_evidence):raise ValueError('public_cache_contains_unapproved_source')
+  input_ids={eid for t in s['themes'] for eid in t['audit']['input_ids']}
+  ledger=[r for r in all_evidence if r['id'] in input_ids]
+  market_audit=[]
+  for row in c.execute('SELECT source,symbol,max(date) last_date FROM observations GROUP BY source,symbol').fetchall():
+   r=dict(row)
+   r['latest_metrics']={v['metric']:v['value'] for v in c.execute('SELECT metric,value FROM observations WHERE source=? AND symbol=? AND date=?',(r['source'],r['symbol'],r['last_date']))}
+   market_audit.append(r)
+ s['data_readiness']=assess(s,ledger,market_audit)
+ (data/'score-inputs.json').write_text(json.dumps(ledger,ensure_ascii=False,separators=(',',':')))
+ (data/'market-audit.json').write_text(json.dumps(market_audit,ensure_ascii=False,separators=(',',':')))
+ (data/'readiness.json').write_text(json.dumps(s['data_readiness'],ensure_ascii=False,indent=2))
  for row in s['evidence']:row['summary']=row['summary'][:280]
  s['deployment_mode']='public-static-browser-local'
  (data/'snapshot.json').write_text(json.dumps(s,ensure_ascii=False,separators=(',',':')))
@@ -49,7 +65,7 @@ def build():
   (data/market_filename(row['symbol'])).write_text(json.dumps(market_data(row['symbol']),ensure_ascii=False,separators=(',',':')))
  for meta in manifest()['series']:
   (data/('history-'+meta['symbol']+'.json')).write_text(json.dumps(overview(meta['symbol']),ensure_ascii=False,separators=(',',':')))
- (data/'build.json').write_text(json.dumps({'as_of':s['as_of'],'revision':os.environ.get('GITHUB_SHA','local'),'evidence':s['evidence_total'],'historical_series':len(manifest()['series']),'public_deployment':'research-trial','private_research_exported':False},ensure_ascii=False))
+ (data/'build.json').write_text(json.dumps({'as_of':s['as_of'],'revision':os.environ.get('GITHUB_SHA','local'),'evidence':s['evidence_total'],'historical_series':len(manifest()['series']),'public_deployment':'limited-core-research' if s['data_readiness']['status']=='core_data_ready' else 'data-insufficient', 'data_readiness':s['data_readiness']['status'],'private_research_exported':False},ensure_ascii=False))
  store.DB_PATH=original
  print('Built',OUT,'files',len(list(OUT.rglob('*'))),'bytes',sum(f.stat().st_size for f in OUT.rglob('*') if f.is_file()))
 if __name__=='__main__':
